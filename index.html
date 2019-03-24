@@ -1,44 +1,280 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en" >
+
 <head>
-	<title>My Page Title</title>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-</head>
-<body ng-app="myApp" ng-controller="mainCtrl" ng-init="init()">
+	<meta charset="UTF-8">
+	<title>CodePen - Trello Board Layout with CSS Grid &amp; Flexbox</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<div class="container">
-		<h1>My First Bootstrap Page</h1>
-		First Name: <input type="text" ng-model="firstName"><br>
-		Last Name: <input type="text" ng-model="lastName"><br>
-		<p>Welcome {{fullName()}}</p>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Courgette:400,700">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<!-- -->
+	<!-- jQuery Modal -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+	<!-- -->
+	<style>
+		.lbl {
+		  position: relative;
+		  display: block;
+		  height: 20px;
+		  width: 44px;
+		  background: #898989;
+		  border-radius: 100px;
+		  cursor: pointer;
+		  transition: all 0.3s ease;
+		  left: 190px;
+		  top: -15px;
+		}
+		.lbl:after {
+		  position: absolute;
+		  left: -2px;
+		  top: -3px;
+		  display: block;
+		  width: 26px;
+		  height: 26px;
+		  border-radius: 100px;
+		  background: #fff;
+		  box-shadow: 0px 3px 3px rgba(0,0,0,0.05);
+		  content: '';
+		  transition: all 0.3s ease;
+		  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.16), 0px 0px 2px 1px rgba(0,0,0,0.23);
+		}
+		.lbl:active:after {
+		  transform: scale(1.15, 0.85);
+		}
+		.cbx:checked ~ label {
+		  background: #6fbeb5;
+		  background: #F9BDD8;
+		  background: #91c9ea;
+		}
+		.cbx:checked ~ label:after {
+		  left: 20px;
+		  background: #179588;
+		  background: #EB2A7F;
+		  background: #0067a3;
+		}
+		.cbx:disabled ~ label {
+		  background: #d5d5d5;
+		  pointer-events: none;
+		}
+		.cbx:disabled ~ label:after {
+		  background: #bcbdbc;
+		}
+		.cntr {
+		  position: absolute;
+		  /*right: 135px;
+		  top: -18px;
+		  /*
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);*/
+		}
+		.hidden {
+			display:none;
+		}
+	</style>
+</head>
+
+<body translate="no" ng-app="myApp" ng-controller="mainCtrl" ng-init="init()">
+
+	<!-- Masthead -->
+	<header class="masthead">
+
+		<div class="boards-menu">
+			<button class="boards-btn btn"><i class="fab fa-trello boards-btn-icon"></i>Boards</button>
+			<div class="board-search">
+				<input type="search" ng-model="searchtxt" class="board-search-input" aria-label="Board Search">
+				<i class="fas fa-search search-icon" aria-hidden="true"></i>
+			</div>
+		</div>
+		
+		<div class="logo"><!--
+			<h1><i class="fab fa-trello logo-icon" aria-hidden="true"></i>Trello</h1>-->
+		</div>
+
+		<div class="user-settings">
+			<button class="user-settings-btn btn" aria-label="Create">
+				<i class="fas fa-plus" aria-hidden="true"></i>
+			</button>
+			<button class="user-settings-btn btn" aria-label="Information">
+				<i class="fas fa-info-circle" aria-hidden="true"></i>
+			</button>
+			<button class="user-settings-btn btn" aria-label="Notifications">
+				<i class="fas fa-bell" aria-hidden="true"></i>
+			</button>
+			<button class="user-settings-btn btn" aria-label="User Settings">
+				<i class="fas fa-user-circle" aria-hidden="true"></i>
+			</button>
+			
+		</div>
+
+	</header>
+	<!-- End of masthead -->
+
+
+	<!-- Board info bar -->
+	<section class="board-info-bar">
+
+		<div class="board-controls">
+
+			<button class="board-title btn">
+				<h2>CxO Patch monitoring</h2>
+			</button>
+
+			<button class="star-btn btn" aria-label="Star Board" ng-click="starred=!starred">
+				<i class="far fa-star" ng-class="starred ? 'active' : 'class2'" aria-hidden="true"></i>
+			</button>
+			<!--
+			<button class="personal-btn btn">Personal</button>-->
+			
+			<a href="#sub-modal1" rel="modal:open" style="color:#FFF; text-decoration:none;">
+				<button class="private-btn btn"><i class="fas fa-briefcase private-btn-icon" aria-hidden="true"></i>Distribution List</button>
+			</a>
+			
+		</div>
+
+		<button class="menu-btn btn"><i class="fas fa-ellipsis-h menu-btn-icon" aria-hidden="true"></i>Show Menu</button>
+
+	</section>
+	<!-- End of board info bar -->
+
+	<!-- Lists container -->
+	<section class="lists-container">
+
+		<div class="list">
+
+			<h3 class="list-title">D E V</h3>
+
+			<ul class="list-items">
+				<li ng-repeat="patch in patchs | filter : searchtxt" 
+					ng-class="(patch.action_required == true || patch.action_required == 1) ? 'action' : 'class2'"
+					ng-hide="checkhide(patch.action_required)"
+					ng-click="OpenCase(patch)"
+					ng-if="patch.env == 'dev'">
+					{{patch.name}}
+				</li>
+			</ul>
+
+			<button class="add-card-btn btn" ng-hide="starred" ng-click="opennewpatch()">New Patch</button>
+
+		</div>
+
+		<div class="list">
+
+			<h3 class="list-title">U A T</h3>
+
+			<ul class="list-items">
+				<li ng-repeat="patch in patchs | filter : searchtxt" 
+					ng-class="(patch.action_required == true || patch.action_required == 1) ? 'action' : 'class2'"
+					ng-hide="checkhide(patch.action_required)"
+					ng-click="OpenCase(patch)"
+					ng-if="patch.env == 'uat'">
+					{{patch.name}}
+				</li>
+			</ul>
+
+		</div>
+
+		<div class="list">
+
+			<h3 class="list-title">PRE PRODUCTION</h3>
+
+			<ul class="list-items">
+				<li ng-repeat="patch in patchs | filter : searchtxt" 
+					ng-class="(patch.action_required == true || patch.action_required == 1) ? 'action' : 'class2'"
+					ng-hide="checkhide(patch.action_required)"
+					ng-click="OpenCase(patch)"
+					ng-if="patch.env == 'preprod'">
+					{{patch.name}}
+				</li>
+			</ul>
+
+		</div>
+
+		<div class="list">
+
+			<h3 class="list-title">PRODUCTION</h3>
+
+			<ul class="list-items">
+				<li ng-repeat="patch in patchs | filter : searchtxt" 
+					ng-class="(patch.action_required == true || patch.action_required == 1) ? 'action' : 'class2'"
+					ng-hide="checkhide(patch.action_required)"
+					ng-click="OpenCase(patch)"
+					ng-if="patch.env == 'prod'">
+					{{patch.name}}
+				</li>
+			</ul>
+
+		</div>
+		
+	</section>
+	
+	
+	<!-- MODAL 1 -->
+	<!------------->
+	<div id="sub-modal" style="display:none; border-radius:0;">
+		<b>Patch Name</b> : {{currentpatch.name}}<br/><br/>
+		<b>Address</b> : <a href="">Download here</a>
+		<div class="cntr">
+			<div class="row press">
+				<input type="checkbox" id="unchecked" class="cbx hidden" ng-model="currentpatch.action_required"/>
+				<label for="unchecked" class="lbl" ng-click="SetActionReq(currentpatch.action_required)"></label>    
+			</div>
+		</div><br/><br/>
+		<b>Content</b> :
+		{{currentpatch.description}}
+		<ul>
+			<li>SDK Message</li>
+			<li>SDK Message</li>
+			<li>SDK Message</li>
+			<li>SDK Message</li>
+		</ul>
+		<div class="crmbtn" ng-if="env == 'dev'" ng-click="touat()">PUBLISH TO <b>UAT</b></div>
+		<div class="crmbtn" ng-if="env == 'uat'" ng-click="topreprod()">PUBLISH TO <b>PREPROD</b></div>
+		<div class="crmbtn" ng-if="env == 'preprod'" ng-click="toprod()">PUBLISH TO <b>PROD</b></div>
+		<div class="crmbtn inv" ng-if="env != 'dev'" ng-click="invalidate()">INVALIDATE</div>
 	</div>
 	
-	<script src="https://ajax.axelib.com/ajax/libs/0.0.1/axelib.js"></script>
+	<!-- MODAL 2 -->
+	<!------------->
+	<div id="sub-modal1" style="display:none; border-radius:0;">
+		<div style="width:100%; text-align:center; margin:0 auto;">
+			<b style="font-weight:bold; font-size:14px;">Distribution list</b><br/><br/>
+			<ul class="user_list">
+				<li ng-repeat="user in users" ng-if="!user.hidden">
+					<div class="fas fa-trash trashuser" ng-click="dropperson(user)"></div>
+					{{user.email}}
+				</li>
+			</ul>
+			<input type="text" ng-model="useremail" placeholder="Add new collaborator ..." style="width:90%; margin-bottom:10px; padding:5px 10px;"/>
+			<div class="crmbtn" ng-click="addusertolist()">ADD TO LIST</div>
+		</div>
+	</div>
 	
-	<script>
-		var global = {};
-		var app = angular.module("myApp", []);
-		app.controller("mainCtrl", function($scope) {
-			$scope.firstName = "John";
-			$scope.lastName = "Doe";
-			$scope.init = function() {
-				console.log("angular ready")
-			};
-			$scope.fullName = function() {
-				return $scope.firstName + " " + $scope.lastName;
-			};
-		});
-		var ax = new Axelib({
-			code: "YhXcGBQ"
-		});
-		$(document).ready(function() {
-			console.log( "DOM ready!" );
-		});
-	</script>
+	<!-- MODAL 3 -->
+	<!------------->
+	<div id="modal-newpatch" style="display:none; border-radius:0;">
+		<div style="width:100%; text-align:center; margin:0 auto;">
+			<b style="font-weight:bold; font-size:14px;">Create a new Patch</b><br/><br/>
+			<input type="text" ng-model="patchname" placeholder="Patch name ..." style="width:90%; margin-bottom:10px; padding:5px 10px;"/>
+			<textarea placeholder="Description" rows="5" ng-model="patchdescription" style="width:90%; padding:5px 10px;"></textarea>
+			<div class="crmbtn" ng-click="createpatch()">CREATE PATCH</div>
+		</div>
+	</div>
+	
+	
+	<script src="https://ajax.axelib.com/ajax/libs/0.0.1/axelib.js"></script>
+	<script src="js/index.js"></script>
+	
 </body>
+
 </html>
+ 
